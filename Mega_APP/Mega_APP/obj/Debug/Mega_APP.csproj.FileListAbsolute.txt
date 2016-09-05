@@ -1,0 +1,4 @@
+D:\Собеседование\Megafon\Mega_APP\Mega_APP\Mega_APP\bin\Mega_APP.dll
+D:\Собеседование\Megafon\Mega_APP\Mega_APP\Mega_APP\bin\Mega_APP.pdb
+D:\Собеседование\Megafon\Mega_APP\Mega_APP\Mega_APP\obj\Debug\Mega_APP.dll
+D:\Собеседование\Megafon\Mega_APP\Mega_APP\Mega_APP\obj\Debug\Mega_APP.pdb
