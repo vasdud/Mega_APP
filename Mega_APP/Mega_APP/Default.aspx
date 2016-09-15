@@ -4,30 +4,14 @@
 <asp:Content ID="HeaderContent" runat="server" ContentPlaceHolderID="HeadContent">
 </asp:Content>
 <asp:Content ID="BodyContent" runat="server" ContentPlaceHolderID="MainContent">
-    <div id="Div1" class="contextMenu">
-    <table style='width:100%;'>
-    <tr><td onclick="fnView();">View Product</td></tr>
-    <tr><td onclick="fnDelete();">Delete Product</td></tr>
-    <tr>
-    <td width = 20% align = left>
+    <h2>
+        Welcome to ASP.NET!
+    </h2>
     <p>
-        <asp:TreeView ID="TreeV" runat="server" 
-            NodeIndent="15" ExpandDepth="0" 
-            onselectednodechanged="TreeV_SelectedNodeChanged">
-            <HoverNodeStyle Font-Underline="True" ForeColor="#6666AA" />
-            <NodeStyle Font-Names="Tahoma" Font-Size="8pt" ForeColor="Black" HorizontalPadding="2px"
-                NodeSpacing="0px" VerticalPadding="2px"></NodeStyle>
-            <ParentNodeStyle Font-Bold="False" />
-            <SelectedNodeStyle BackColor="#B5B5B5" Font-Underline="False" HorizontalPadding="0px"
-                VerticalPadding="0px" />
-        </asp:TreeView>
-    </td>
-    <td width = 80% align = center>
-        <asp:GridView ID="GView" runat="server" AllowSorting="True">
-        </asp:GridView>
-    </td>
+        To learn more about ASP.NET visit <a href="http://www.asp.net" title="ASP.NET Website">www.asp.net</a>.
     </p>
-    </tr>
-    </table>
-    </div>
+    <p>
+        You can also find <a href="http://go.microsoft.com/fwlink/?LinkID=152368&amp;clcid=0x409"
+            title="MSDN ASP.NET Docs">documentation on ASP.NET at MSDN</a>.
+    </p>
 </asp:Content>
