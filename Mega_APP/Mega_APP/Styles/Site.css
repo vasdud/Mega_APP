@@ -50,8 +50,8 @@ h1, h2, h3, h4, h5, h6
 h1
 {
     font-size: 1.6em;
-    padding-bottom: 0px;
-    margin-bottom: 0px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 h2
@@ -108,7 +108,7 @@ first child of the left and right table columns */
     font-weight: 700;
     margin: 0px;
     padding: 0px 0px 0px 20px;
-    color: #f9f9f9;
+    color: red;
     border: none;
     line-height: 2em;
     font-size: 2em;
@@ -249,7 +249,7 @@ div.accountInfo
     display: block;
     float: left;
     text-align: left;
-    width: auto;
+    width: 100%;
 }
 
 .loginDisplay

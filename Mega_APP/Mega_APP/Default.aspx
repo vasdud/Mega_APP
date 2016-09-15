@@ -4,10 +4,7 @@
 <asp:Content ID="HeaderContent" runat="server" ContentPlaceHolderID="HeadContent">
 </asp:Content>
 <asp:Content ID="BodyContent" runat="server" ContentPlaceHolderID="MainContent">
-    <div id="Div1" class="contextMenu">
     <table style='width:100%;'>
-    <tr><td onclick="fnView();">View Product</td></tr>
-    <tr><td onclick="fnDelete();">Delete Product</td></tr>
     <tr>
     <td width = 20% align = left>
     <p>
@@ -29,5 +26,4 @@
     </p>
     </tr>
     </table>
-    </div>
 </asp:Content>
