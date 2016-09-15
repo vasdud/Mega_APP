@@ -8,13 +8,34 @@
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
     </asp:ContentPlaceHolder>
 </head>
-<body>
+<body oncontextmenu="return false">
     <form runat="server">
+    <div style="display:none; "   id="contextMenu">
+        <table  border="0" cellpadding="0" cellspacing="0" 
+            style="border: thin solid #808080; cursor: default;" width="100px" 
+            bgcolor="White">
+            <tr>
+                <td >
+                    <div  class="ContextItem">View</div>
+                </td>
+            </tr>
+            <tr>
+                <td >
+                <div  class="ContextItem">Edit</div>
+                </td>
+            </tr>
+            <tr>
+                <td >
+                    <div  class="ContextItem">Delete</div>
+                </td>
+            </tr>
+        </table>
+    </div>
     <div class="page">
         <div class="header">
             <div class="title">
                 <h1>
-                    My ASP.NET Application
+                    Mega APP
                 </h1>
             </div>
             <div class="loginDisplay">
