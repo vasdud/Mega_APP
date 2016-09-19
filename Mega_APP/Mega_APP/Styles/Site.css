@@ -292,3 +292,30 @@ div.accountInfo
     text-align: right;
     padding-right: 10px;
 }
+
+/*
+---------- Context Menu Item Style */
+
+.ContextItem
+{
+    background-color:White;
+    color:Black;
+    font-weight:normal;
+}
+.ContextItem:hover   <!-Context Menu Item Style On Mouse Over-->
+{
+    background-color:#0066FF;
+    color:White;
+    font-weight:bold;            
+}
+.detailItem
+{
+    background:transparant;       
+}
+.detailItem:hover
+{
+    background-color:#FEE378;
+    border: 1px outset #222222;
+    font-weight:bold;
+    cursor:default;
+}

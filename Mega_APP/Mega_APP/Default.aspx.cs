@@ -14,13 +14,8 @@ namespace Mega_APP
     {
         const string myInitCatalog = "; Initial Catalog=";
         const string myQuery = "SELECT TOP 10 * from ";
-
-        struct DBItems
-        { 
-            public string Name;
-            public int ID;
-            public DateTime CreatedDate;
-        };
+        const string myDeleteQuery = "DROP table dbo.";
+        const string myCreateQuery = "CREATE table dbo.";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,39 +23,34 @@ namespace Mega_APP
             {
                 using (var aCon = new SqlConnection(ConfigurationManager.ConnectionStrings["cs_toSQL"].ToString()))
                 {
-                    List<DBItems> aListDBs = new List<DBItems>();
+                    int aCount = 0;
                     aCon.Open();
                     DataTable aDBs = aCon.GetSchema("Databases");
                     TreeNode aChild = new TreeNode
                     {
                         Text = "Databases",
-                        Value = "0"
+                        Value = aCount.ToString()
                     };
                     TreeV.Nodes.Add(aChild);
+                    TreeV.Attributes.Add("oncontextmenu", "ShowMenu('contextMenu',event)");
+                    
                     foreach (DataRow aDBr in aDBs.Rows)
                     {
+                        aCount++;
                         string aConnStr = ConfigurationManager.ConnectionStrings["cs_toSQL"].ToString() + myInitCatalog + aDBr.ItemArray[0].ToString();
-                        PopulateTreeView(aDBr, aConnStr, aChild);
-                        /*DBItems aDBI = new DBItems();
-                        aDBI.Name = aDBr.ItemArray[0].ToString();
-                        aDBI.ID = Int32.Parse(aDBr.ItemArray[1].ToString());
-                        aDBI.CreatedDate = DateTime.Parse(aDBr.ItemArray[1].ToString());
-                        aListDBs.Add(aDBI);*/
+                        PopulateTreeView(aDBr, aConnStr, aChild, aCount);
                     }
                 }
-                //////////
-                //DataTable dt = this.GetData("SELECT [Personal Number], [Name] FROM [Users]");
-                //this.PopulateTreeView(dt, 0, null);
             }
         }
 
-        private void PopulateTreeView(DataRow theDBr, string theConnStr, TreeNode theChild)
+        private void PopulateTreeView(DataRow theDBr, string theConnStr, TreeNode theChild, int tbeCount)
         {
-            int aCount = 0;
+            tbeCount *= 10;
             TreeNode aChild = new TreeNode
             {
                 Text = theDBr.ItemArray[0].ToString(),
-                Value = theDBr.ItemArray[1].ToString()
+                Value = tbeCount.ToString()
             };
             theChild.ChildNodes.Add(aChild);
 
@@ -69,57 +59,113 @@ namespace Mega_APP
                 TreeNode aCh;
                 aCon.Open();
                 DataTable aDBs = aCon.GetSchema("Tables");
+                tbeCount *= 10;
                 foreach (DataRow aDBr in aDBs.Rows)
                 {
                     if (aDBr.ItemArray[3].ToString().Equals("BASE TABLE"))
                     {
-                        aCount++;
+                        tbeCount++;
                         aCh = new TreeNode
                         {
                             Text = aDBr.ItemArray[2].ToString(),
-                            Value = aCount.ToString()
+                            Value = tbeCount.ToString()
                         };
                         aChild.ChildNodes.Add(aCh);
                     }
                 }
-                /*if (aCount == 0)
+            }
+        }
+
+        private bool checkClickableNode(string theValue)
+        {
+            bool isResult = false;
+            int aVl= 0;
+            if (Int32.TryParse(theValue, out aVl))
+            {
+                if (aVl >= 100)
                 {
-                    aCh = new TreeNode
-                    {
-                        Text = "",
-                        Value = ""
-                    };
-                    aChild.ChildNodes.Add(aCh);
-                    aChild.Expanded = false;
-                    aChild.ShowCheckBox = false;
-                }*/
+                    isResult = true;
+                }
             }
-            //TreeV.Nodes.Add(aChild);
-            /*if (parentId == 0)
-            {
-                TreeView1.Nodes.Add(child);
-                DataTable dtChild = this.GetData("SELECT [Personal Number], [Name] FROM [Users] WHERE [Personal Number] = " + child.Value);
-                PopulateTreeView(dtChild, int.Parse(child.Value), child);
-            }
-            else
-            {
-                treeNode.ChildNodes.Add(child);
-            }*/
+            return isResult;
         }
 
         protected void TreeV_SelectedNodeChanged(object sender, EventArgs e)
         {
-            string aQuery = string.Empty;
-            string ICatalog = string.Empty;
             TreeNode aSNode = ((TreeView)sender).SelectedNode;
-            if (aSNode.Parent != null)
+            if (checkClickableNode(aSNode.Value))
             {
-                TreeNode aPNode = aSNode.Parent;
-                ICatalog = aPNode.Text;
+                string aQuery = string.Empty;
+                string anICatalog = string.Empty;
+                if (aSNode.Parent != null)
+                {
+                    TreeNode aPNode = aSNode.Parent;
+                    anICatalog = aPNode.Text;
+                }
+                aQuery = myQuery + aSNode.Text;
+                DataTable dt = new DataTable();
+                string dbConn = ConfigurationManager.ConnectionStrings["cs_toSQL"].ToString() + myInitCatalog + anICatalog;
+                using (SqlConnection con = new SqlConnection(dbConn))
+                {
+                    using (SqlCommand cmd = new SqlCommand(aQuery))
+                    {
+                        using (SqlDataAdapter sda = new SqlDataAdapter())
+                        {
+                            cmd.CommandType = CommandType.Text;
+                            cmd.Connection = con;
+                            sda.SelectCommand = cmd;
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+                GView.DataSource = dt;
+                GView.DataBind();
             }
-            aQuery = myQuery + aSNode.Text;
+        }
+
+        /// <summary>
+        /// Функция для удаления таблицы из БД
+        /// </summary>
+        private void deleteTable(TreeNode theNode)
+        {
+            if (checkClickableNode(theNode.Value))
+            {
+                string aQuery = string.Empty;
+                string anICatalog = string.Empty;
+                if (theNode.Parent != null)
+                {
+                    TreeNode aPNode = theNode.Parent;
+                    anICatalog = aPNode.Text;
+                }
+                aQuery = myDeleteQuery + theNode.Text;
+                DataTable dt = new DataTable();
+                string dbConn = ConfigurationManager.ConnectionStrings["cs_toSQL"].ToString() + myInitCatalog + anICatalog;
+                using (SqlConnection con = new SqlConnection(dbConn))
+                {
+                    using (SqlCommand cmd = new SqlCommand(aQuery))
+                    {
+                        using (SqlDataAdapter sda = new SqlDataAdapter())
+                        {
+                            cmd.CommandType = CommandType.Text;
+                            cmd.Connection = con;
+                            sda.SelectCommand = cmd;
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+                GView.DataSource = dt;
+                GView.DataBind();
+            }
+        }
+
+        /// <summary>
+        /// Функция для создания таблицы в БД
+        /// </summary>
+        private void CreateTable(string theDBName, string theTbName)
+        {
+            string aQuery = myCreateQuery + theTbName;
             DataTable dt = new DataTable();
-            string dbConn = ConfigurationManager.ConnectionStrings["cs_toSQL"].ToString() + myInitCatalog + ICatalog;
+            string dbConn = ConfigurationManager.ConnectionStrings["cs_toSQL"].ToString() + myInitCatalog + theDBName;
             using (SqlConnection con = new SqlConnection(dbConn))
             {
                 using (SqlCommand cmd = new SqlCommand(aQuery))
@@ -136,25 +182,5 @@ namespace Mega_APP
             GView.DataSource = dt;
             GView.DataBind();
         }
-
-        /*private DataTable GetData(string query)
-        {
-            DataTable dt = new DataTable();
-            string dbConn = ConfigurationManager.ConnectionStrings["cs_toSQL"].ToString();
-            using (SqlConnection con = new SqlConnection(dbConn))
-            {
-                using (SqlCommand cmd = new SqlCommand(query))
-                {
-                    using (SqlDataAdapter sda = new SqlDataAdapter())
-                    {
-                        cmd.CommandType = CommandType.Text;
-                        cmd.Connection = con;
-                        sda.SelectCommand = cmd;
-                        sda.Fill(dt);
-                    }
-                }
-            }
-            return dt;
-        }*/
     }
 }
